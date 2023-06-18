@@ -24,9 +24,9 @@
 import { ref } from "vue";
 import { io } from "socket.io-client";
 import { onBeforeUnmount } from "vue";
+
 const socket = io("http://localhost:3000");
 const messages = ref<string[]>([]);
-
 const inputMessage = ref("");
 
 const onClickSend = () => {

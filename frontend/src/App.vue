@@ -23,8 +23,14 @@ const generateRandomHexColor = () => {
   return randomColor;
 };
 
-let id = localStorage.getItem("userId");
-let hex = localStorage.getItem("hex");
+//If you want to have separate tabs open as "different users"
+//Then you can't reference localStorage
+// let id = localStorage.getItem("userId");
+let id = undefined;
+
+// Same here
+// let hex = localStorage.getItem("hex");
+let hex = undefined;
 
 if (!id) {
   id = uuidv4();
