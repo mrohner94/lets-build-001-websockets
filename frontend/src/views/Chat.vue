@@ -23,14 +23,13 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { io } from "socket.io-client";
+import { onBeforeUnmount } from "vue";
 const socket = io("http://localhost:3000");
 const messages = ref<string[]>([]);
 
 const inputMessage = ref("");
 
 const onClickSend = () => {
-  console.log("send");
-
   if (inputMessage.value) {
     socket.emit("chat message", inputMessage.value);
     inputMessage.value = "";
@@ -40,5 +39,9 @@ const onClickSend = () => {
 socket.on("chat message", function (msg) {
   messages.value.push(msg);
   window.scrollTo(0, document.body.scrollHeight);
+});
+
+onBeforeUnmount(() => {
+  socket.disconnect();
 });
 </script>
