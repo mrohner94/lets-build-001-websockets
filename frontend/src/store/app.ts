@@ -1,4 +1,3 @@
-// Utilities
 import { defineStore } from "pinia";
 
 interface State {
