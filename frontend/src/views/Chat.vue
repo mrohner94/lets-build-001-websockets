@@ -112,8 +112,8 @@ const onClickSend = () => {
   }
 };
 
-socket.on("message all", function (payload: AllMessage) {
-  messages.value.push(payload);
+socket.on("message all", async (payload: AllMessage) => {
+  await messages.value.push(payload);
   scrollToBottom("chat-window");
 });
 
