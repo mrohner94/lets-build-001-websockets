@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { io } from "socket.io-client";
-const socket = io("localhost:3000");
+const socket = io("http://localhost:3000");
 const messages = ref<string[]>([]);
 
 const inputMessage = ref("");
