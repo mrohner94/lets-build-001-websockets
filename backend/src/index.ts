@@ -1,6 +1,7 @@
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
+import { AllMessage } from "./types";
 
 const app = express();
 const server = http.createServer(app);
@@ -16,9 +17,10 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("user disconnected");
   });
-  socket.on("chat message", (msg) => {
-    console.log("message: " + msg);
-    io.emit("chat message", msg);
+
+  socket.on("message all", (payload: AllMessage) => {
+    console.log("payload: ", payload);
+    io.emit("message all", payload);
   });
 });
 

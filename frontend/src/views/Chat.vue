@@ -1,11 +1,31 @@
 <style scoped>
-@import "../assets/chat.css";
+@import "@/assets/chat.css";
 </style>
 
 <template>
-  <ul id="messages">
-    <li v-for="message in messages">{{ message }}</li>
-  </ul>
+  <v-list id="chat-window" :lines="false" class="pa-0 ma-0 chat-window">
+    <v-list-item
+      v-for="message in messages"
+      :key="uuidv4()"
+      :style="`background: ${message.hex}`"
+      prepend-avatar="https://placekitten.com/64/64"
+    >
+      <template v-slot:title>
+        <div
+          :class="
+            isColorDark(message.hex)
+              ? 'text-white font-weight-bold'
+              : 'text-medium-emphasis font-weight-bold'
+          "
+        >
+          {{ message.userId }}
+        </div>
+        <div :class="isColorDark(message.hex) ? 'text-white' : ''">
+          {{ message.msg }}
+        </div>
+      </template>
+    </v-list-item>
+  </v-list>
   <v-form
     id="form"
     @submit.prevent=""
@@ -24,21 +44,50 @@
 import { ref } from "vue";
 import { io } from "socket.io-client";
 import { onBeforeUnmount } from "vue";
+import { useAppState } from "@/store/app";
+import { type AllMessage } from "@/types";
+import { v4 as uuidv4 } from "uuid";
 
+const $state = useAppState();
 const socket = io("http://localhost:3000");
-const messages = ref<string[]>([]);
+const messages = ref<AllMessage[]>([]);
 const inputMessage = ref("");
+
+const scrollToBottom = (elementId: string) => {
+  var element = document.getElementById(elementId);
+  if (element) {
+    element.scrollTop = element.scrollHeight;
+  }
+};
+
+const isColorDark = (hexColor: string) => {
+  if (hexColor.startsWith("#")) {
+    hexColor = hexColor.slice(1);
+  }
+  const red = parseInt(hexColor.slice(0, 2), 16);
+  const green = parseInt(hexColor.slice(2, 4), 16);
+  const blue = parseInt(hexColor.slice(4, 6), 16);
+  const relativeLuminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+  const threshold = 128;
+
+  return relativeLuminance < threshold;
+};
 
 const onClickSend = () => {
   if (inputMessage.value) {
-    socket.emit("chat message", inputMessage.value);
+    const payload: AllMessage = {
+      userId: $state.userId,
+      hex: $state.hex,
+      msg: inputMessage.value,
+    };
+    socket.emit("message all", payload);
     inputMessage.value = "";
   }
 };
 
-socket.on("chat message", function (msg) {
-  messages.value.push(msg);
-  window.scrollTo(0, document.body.scrollHeight);
+socket.on("message all", function (payload: AllMessage) {
+  messages.value.push(payload);
+  scrollToBottom("chat-window");
 });
 
 onBeforeUnmount(() => {
