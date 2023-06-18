@@ -20,7 +20,6 @@
     "express": "^4.18.2",
     "morgan": "^1.10.0",
     "nanobuffer": "^3.0.0",
-    "serve-handler": "^6.1.5",
     "socket.io": "^4.6.2"
   }
 }
