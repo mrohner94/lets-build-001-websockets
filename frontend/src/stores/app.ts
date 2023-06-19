@@ -1,11 +1,8 @@
+import type { AppState } from "@/types";
 import { defineStore } from "pinia";
 
-interface State {
-  userId: string;
-  hex: string;
-}
 export const useAppState = defineStore("app", {
-  state: (): State => ({
+  state: (): AppState => ({
     userId: "",
     hex: "",
   }),
