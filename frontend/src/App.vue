@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import { RouterView } from "vue-router";
 import { v4 as uuidv4 } from "uuid";
-import { useAppState } from "@/store/app";
+import { useAppState } from "@/stores/app";
 
 const $state = useAppState();
 

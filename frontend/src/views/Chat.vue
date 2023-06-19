@@ -71,7 +71,7 @@
 import { ref } from "vue";
 import { io } from "socket.io-client";
 import { onBeforeUnmount } from "vue";
-import { useAppState } from "@/store/app";
+import { useAppState } from "@/stores/app";
 import { type AllMessage } from "@/types";
 import { v4 as uuidv4 } from "uuid";
 
