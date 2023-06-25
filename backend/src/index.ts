@@ -1,6 +1,7 @@
 import http from "http";
 import { Server } from "socket.io";
 import { AllMessage } from "./types";
+import NodeCache from "node-cache"
 
 const server = http.createServer();
 const io = new Server(server, {
@@ -9,14 +10,27 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
+const userSocketCache = new NodeCache();
 
 io.on("connection", (socket) => {
   console.log("a user connected");
-  const userId = socket.handshake.query.userId;
-  console.log("id: ", socket.id)
-  console.log("userId: ", userId)
+  const userId = socket.handshake.query.userId as string;
+
+  userSocketCache.set(userId, socket.id);
   socket.on("disconnect", () => {
     console.log("user disconnected");
+
+    const disconnectedSocketId = socket.id;
+    const userIds = userSocketCache.keys();
+    userIds.forEach((userId) => {
+      const socketId = userSocketCache.get(userId);
+      if (socketId === disconnectedSocketId) {
+        userSocketCache.del(userId);
+        console.log(`User ${userId} disconnected`);
+      }
+    })
+
+    console.log(userSocketCache.data)
   });
 
   socket.on("message all", (payload: AllMessage) => {
