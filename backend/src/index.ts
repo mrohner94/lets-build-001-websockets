@@ -17,6 +17,11 @@ io.on("connection", (socket) => {
   const userId = socket.handshake.query.userId as string;
 
   userSocketCache.set(userId, socket.id);
+
+  console.log(userSocketCache)
+  console.log(userSocketCache.keys());
+  io.emit("update users", userSocketCache.keys())
+
   socket.on("disconnect", () => {
     console.log("user disconnected");
 
@@ -30,13 +35,17 @@ io.on("connection", (socket) => {
       }
     })
 
-    console.log(userSocketCache.data)
+    io.emit("update users", userSocketCache.keys())
+
+    // console.log(userSocketCache.data)
   });
 
   socket.on("message all", (payload: AllMessage) => {
     console.log("payload: ", payload);
     io.emit("message all", payload);
   });
+
+
 });
 
 server.listen(3000, () => {
