@@ -15,10 +15,12 @@
   box-sizing: border-box;
   backdrop-filter: blur(10px);
 }
+
 #input:focus {
   outline: none;
 }
-#form > button {
+
+#form>button {
   background: #333;
   border: none;
   padding: 0 1rem;
@@ -31,20 +33,13 @@
 
 <template>
   <v-list id="chat-window" :lines="false" class="pa-0 ma-0 chat-window">
-    <v-list-item
-      v-for="message in messages"
-      :key="uuidv4()"
-      :style="`background: ${message.hex}`"
-      prepend-avatar="https://placekitten.com/64/64"
-    >
+    <v-list-item v-for="message in messages" :key="uuidv4()" :style="`background: ${message.hex}`"
+      prepend-avatar="https://placekitten.com/64/64">
       <template v-slot:title>
-        <div
-          :class="
-            isColorDark(message.hex)
-              ? 'text-white font-weight-bold'
-              : 'text-medium-emphasis font-weight-bold'
-          "
-        >
+        <div :class="isColorDark(message.hex)
+          ? 'text-white font-weight-bold'
+          : 'text-medium-emphasis font-weight-bold'
+          ">
           {{ message.userId }}
         </div>
         <div :class="isColorDark(message.hex) ? 'text-white' : ''">
@@ -53,17 +48,8 @@
       </template>
     </v-list-item>
   </v-list>
-  <v-form
-    id="form"
-    @submit.prevent=""
-    class="d-flex align-center justify-space-between"
-  >
-    <input
-      v-model="inputMessage"
-      type="text"
-      class="bg-white rounded w-100 h-100 mr-4"
-      @keydown.enter="onClickSend"
-    />
+  <v-form id="form" @submit.prevent="" class="d-flex align-center justify-space-between">
+    <input v-model="inputMessage" type="text" class="bg-white rounded w-100 h-100 mr-4" @keydown.enter="onClickSend" />
     <v-btn @click="onClickSend">Send</v-btn>
   </v-form>
 </template>
@@ -76,7 +62,12 @@ import { type AllMessage } from "@/types";
 import { v4 as uuidv4 } from "uuid";
 
 const $state = useAppState();
-const socket = io("http://localhost:3000");
+const socket = io("http://localhost:3000",
+  {
+    query: { userId: $state.userId }
+  }
+);
+
 const messages = ref<AllMessage[]>([]);
 const inputMessage = ref("");
 
